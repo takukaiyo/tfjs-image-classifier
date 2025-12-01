@@ -107,30 +107,38 @@ class ImageClassifierModel {
 
     /**
      * 构建 MobileNet 迁移学习模型
+     * 使用函数式 API 创建一个完整的模型，将冻结的 MobileNet 基础模型
+     * 与可训练的分类头连接在一起
      * @param {number} numClasses - 类别数量
      * @returns {Promise<tf.LayersModel>}
      */
     async buildMobileNetModel(numClasses) {
         await this.loadMobileNetBase();
 
-        // 构建顶层分类器
-        const model = tf.sequential();
+        // 使用函数式 API 创建完整模型
+        // 输入层：接收原始图片 (224, 224, 3)
+        const input = tf.input({ shape: [this.mobilenetSize, this.mobilenetSize, 3] });
 
-        // 输入层，接收 MobileNet 的输出
-        model.add(tf.layers.globalAveragePooling2d({
-            inputShape: this.mobilenetBase.outputs[0].shape.slice(1)
-        }));
+        // 通过冻结的 MobileNet 基础模型提取特征
+        const baseOutput = this.mobilenetBase.apply(input);
 
-        model.add(tf.layers.dense({
+        // 构建分类头
+        let x = tf.layers.globalAveragePooling2d().apply(baseOutput);
+
+        x = tf.layers.dense({
             units: 128,
             activation: 'relu'
-        }));
-        model.add(tf.layers.dropout({ rate: 0.5 }));
+        }).apply(x);
 
-        model.add(tf.layers.dense({
+        x = tf.layers.dropout({ rate: 0.5 }).apply(x);
+
+        const output = tf.layers.dense({
             units: numClasses,
             activation: 'softmax'
-        }));
+        }).apply(x);
+
+        // 创建完整模型
+        const model = tf.model({ inputs: input, outputs: output });
 
         return model;
     }
@@ -220,17 +228,10 @@ class ImageClassifierModel {
         }
 
         // 堆叠为批次张量
-        let xs = tf.stack(tensors);
+        const xs = tf.stack(tensors);
 
         // 清理单个张量
         tensors.forEach(t => t.dispose());
-
-        // 如果是 MobileNet，先通过基础模型提取特征
-        if (this.currentModelType === 'mobilenet') {
-            const features = this.mobilenetBase.predict(xs);
-            xs.dispose();
-            xs = features;
-        }
 
         // 创建 one-hot 编码的标签
         const ys = tf.oneHot(labels, numClasses);
@@ -341,18 +342,11 @@ class ImageClassifierModel {
             : this.imageSize;
 
         // 转换图片为张量
-        let tensor = await this.imageToTensor(base64Image, targetSize);
+        const tensor = await this.imageToTensor(base64Image, targetSize);
         
         // 添加批次维度
-        let batch = tensor.expandDims(0);
+        const batch = tensor.expandDims(0);
         tensor.dispose();
-
-        // 如果是 MobileNet，先提取特征
-        if (this.currentModelType === 'mobilenet') {
-            const features = this.mobilenetBase.predict(batch);
-            batch.dispose();
-            batch = features;
-        }
 
         // 进行预测
         const predictions = this.model.predict(batch);
