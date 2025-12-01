@@ -1,0 +1,584 @@
+/* 基础样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #4a90d9;
+    --primary-hover: #3a7bc8;
+    --success-color: #28a745;
+    --success-hover: #218838;
+    --danger-color: #dc3545;
+    --danger-hover: #c82333;
+    --warning-color: #ffc107;
+    --bg-color: #f5f7fa;
+    --card-bg: #ffffff;
+    --text-color: #333333;
+    --text-light: #666666;
+    --border-color: #e0e0e0;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --radius: 8px;
+}
+
+body {
+    font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 头部样式 */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--primary-color), #6366f1);
+    border-radius: var(--radius);
+    color: white;
+}
+
+header h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+header .subtitle {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* 卡片样式 */
+.card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.card h2 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border-color);
+    color: var(--primary-color);
+}
+
+.card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    color: var(--text-color);
+}
+
+/* 按钮样式 */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 500;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+    background-color: var(--success-hover);
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+    background-color: var(--danger-hover);
+}
+
+.btn-small {
+    padding: 5px 12px;
+    font-size: 0.85rem;
+}
+
+/* 输入框样式 */
+input[type="text"],
+input[type="number"],
+select {
+    padding: 10px 14px;
+    font-size: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+    border-color: var(--primary-color);
+}
+
+/* 类别管理 */
+.category-management {
+    margin-bottom: 24px;
+}
+
+.category-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.category-controls input {
+    flex: 1;
+    max-width: 300px;
+}
+
+.category-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.category-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background-color: var(--bg-color);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+}
+
+.category-item .category-name {
+    font-weight: 500;
+}
+
+.category-item .category-count {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.category-item .delete-btn {
+    background: none;
+    border: none;
+    color: var(--danger-color);
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0 4px;
+}
+
+.category-item .delete-btn:hover {
+    color: var(--danger-hover);
+}
+
+/* 上传区域 */
+.upload-section {
+    margin-bottom: 24px;
+}
+
+.upload-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.upload-controls label {
+    font-weight: 500;
+}
+
+.upload-controls select {
+    flex: 1;
+    max-width: 200px;
+}
+
+.drop-zone {
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius);
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: var(--bg-color);
+}
+
+.drop-zone:hover,
+.drop-zone.dragover {
+    border-color: var(--primary-color);
+    background-color: rgba(74, 144, 217, 0.05);
+}
+
+.drop-zone-content .drop-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.drop-zone-content p {
+    color: var(--text-light);
+}
+
+/* 数据统计 */
+.data-stats {
+    margin-top: 24px;
+}
+
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.stat-item {
+    padding: 12px;
+    background-color: var(--bg-color);
+    border-radius: var(--radius);
+    text-align: center;
+}
+
+.stat-item .stat-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.stat-item .stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.empty-message {
+    text-align: center;
+    color: var(--text-light);
+    padding: 20px;
+}
+
+/* 配置区域 */
+.config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.config-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.config-item label {
+    font-weight: 500;
+}
+
+.config-item input[type="range"] {
+    width: 100%;
+}
+
+.config-item select,
+.config-item input[type="number"] {
+    width: 100%;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 8px 12px;
+    background-color: var(--bg-color);
+    border-radius: var(--radius);
+    transition: background-color 0.3s;
+}
+
+.radio-label:hover {
+    background-color: rgba(74, 144, 217, 0.1);
+}
+
+.radio-label input[type="radio"] {
+    width: 16px;
+    height: 16px;
+}
+
+/* 训练控制区 */
+.training-controls {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.training-status {
+    margin-bottom: 24px;
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 20px;
+    background-color: var(--bg-color);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+    transition: width 0.3s ease;
+}
+
+#progressText {
+    min-width: 80px;
+    text-align: right;
+    font-weight: 500;
+}
+
+.training-info {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.training-info p {
+    font-size: 0.95rem;
+}
+
+.training-info span {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* 图表区域 */
+.charts-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.chart-wrapper {
+    background-color: var(--bg-color);
+    padding: 16px;
+    border-radius: var(--radius);
+}
+
+.chart-wrapper h3 {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.chart-wrapper canvas {
+    max-height: 250px;
+}
+
+/* 预测区域 */
+.prediction-drop {
+    margin-bottom: 24px;
+}
+
+.prediction-result {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.prediction-image {
+    text-align: center;
+}
+
+.prediction-image img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.prediction-chart {
+    background-color: var(--bg-color);
+    padding: 16px;
+    border-radius: var(--radius);
+}
+
+.prediction-chart canvas {
+    max-height: 300px;
+}
+
+/* 页脚 */
+footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+/* 响应式布局 */
+@media (max-width: 768px) {
+    .container {
+        padding: 12px;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .category-controls {
+        flex-direction: column;
+    }
+
+    .category-controls input {
+        max-width: none;
+    }
+
+    .upload-controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .upload-controls select {
+        max-width: none;
+        width: 100%;
+    }
+
+    .training-controls {
+        flex-direction: column;
+    }
+
+    .training-controls .btn {
+        width: 100%;
+    }
+
+    .training-info {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .prediction-result {
+        grid-template-columns: 1fr;
+    }
+
+    .config-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .charts-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.3rem;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+
+    .drop-zone {
+        padding: 24px 16px;
+    }
+
+    .drop-zone-content .drop-icon {
+        font-size: 2rem;
+    }
+}
+
+/* 加载动画 */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 消息提示 */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 24px;
+    background-color: var(--text-color);
+    color: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    z-index: 1000;
+    animation: slideIn 0.3s ease;
+}
+
+.toast.success {
+    background-color: var(--success-color);
+}
+
+.toast.error {
+    background-color: var(--danger-color);
+}
+
+.toast.warning {
+    background-color: var(--warning-color);
+    color: var(--text-color);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
