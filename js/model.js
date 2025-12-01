@@ -268,6 +268,12 @@ class ImageClassifierModel {
                 shuffle: true,
                 validationSplit: 0.2,
                 callbacks: {
+                    onEpochBegin: async () => {
+                        // 在每个 epoch 开始时检查是否应该停止
+                        if (!this.isTraining) {
+                            this.model.stopTraining = true;
+                        }
+                    },
                     onEpochEnd: async (epoch, logs) => {
                         if (!this.isTraining) {
                             this.model.stopTraining = true;
@@ -279,6 +285,12 @@ class ImageClassifierModel {
                         }
                     },
                     onBatchEnd: async (batch, logs) => {
+                        // 在每个批次结束时检查是否应该停止
+                        if (!this.isTraining) {
+                            this.model.stopTraining = true;
+                            return;
+                        }
+                        
                         if (this.onBatchEnd) {
                             this.onBatchEnd(batch, logs);
                         }

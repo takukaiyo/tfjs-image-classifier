@@ -325,16 +325,20 @@ class UIManager {
             return;
         }
 
-        // 从数据库删除该类别的图片
-        await imageDB.deleteCategory(category);
-        
-        // 从类别列表中移除
-        this.categories = this.categories.filter(c => c !== category);
-        
-        this.updateCategoryList();
-        this.updateCategorySelect();
-        this.updateDataStats();
-        this.showToast(`类别 "${category}" 已删除`, 'success');
+        try {
+            // 从数据库删除该类别的图片
+            await imageDB.deleteCategory(category);
+            
+            // 从类别列表中移除
+            this.categories = this.categories.filter(c => c !== category);
+            
+            this.updateCategoryList();
+            this.updateCategorySelect();
+            this.updateDataStats();
+            this.showToast(`类别 "${category}" 已删除`, 'success');
+        } catch (error) {
+            this.showToast('删除类别失败：' + error.message, 'error');
+        }
     }
 
     /**
@@ -443,10 +447,21 @@ class UIManager {
             this.updatePredictionChart(results);
         } catch (error) {
             this.showToast('预测失败：' + error.message, 'error');
+            // 清空预测图表以避免显示过时结果
+            this.clearPredictionChart();
         }
 
         // 清空文件输入
         this.elements.testImageInput.value = '';
+    }
+
+    /**
+     * 清空预测结果图表
+     */
+    clearPredictionChart() {
+        this.predictionChart.data.labels = [];
+        this.predictionChart.data.datasets[0].data = [];
+        this.predictionChart.update();
     }
 
     /**
@@ -581,18 +596,24 @@ class UIManager {
     updateTrainingProgress(epoch, totalEpochs, logs) {
         const progress = (epoch / totalEpochs) * 100;
         
+        // 安全获取训练指标
+        const loss = logs.loss !== undefined ? logs.loss : 0;
+        const acc = logs.acc !== undefined ? logs.acc : 0;
+        
         this.elements.progressFill.style.width = `${progress}%`;
         this.elements.progressText.textContent = `${progress.toFixed(1)}%`;
         this.elements.currentEpoch.textContent = epoch;
-        this.elements.currentLoss.textContent = logs.loss.toFixed(4);
-        this.elements.currentAccuracy.textContent = (logs.acc * 100).toFixed(2) + '%';
+        this.elements.currentLoss.textContent = loss.toFixed(4);
+        this.elements.currentAccuracy.textContent = (acc * 100).toFixed(2) + '%';
 
         // 更新图表
-        this.lossData.push(logs.loss);
-        this.accuracyData.push(logs.acc);
+        this.lossData.push(loss);
+        this.accuracyData.push(acc);
         
         if (logs.val_loss !== undefined) {
             this.valLossData.push(logs.val_loss);
+        }
+        if (logs.val_acc !== undefined) {
             this.valAccuracyData.push(logs.val_acc);
         }
 
