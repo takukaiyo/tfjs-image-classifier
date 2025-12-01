@@ -80,6 +80,7 @@ class ImageClassifierModel {
 
     /**
      * 加载 MobileNet 基础模型
+     * 此模型将作为特征提取器使用，其权重在 Transfer Learning 过程中保持冻结
      * @returns {Promise<tf.LayersModel>}
      */
     async loadMobileNetBase() {
@@ -99,7 +100,7 @@ class ImageClassifierModel {
             outputs: layer.output
         });
 
-        // 冻结基础模型的权重
+        // 冻结基础模型的权重，确保在训练时只更新分类头的权重
         this.mobilenetBase.trainable = false;
 
         return this.mobilenetBase;
@@ -108,7 +109,10 @@ class ImageClassifierModel {
     /**
      * 构建 MobileNet 迁移学习模型
      * 使用函数式 API 创建一个完整的模型，将冻结的 MobileNet 基础模型
-     * 与可训练的分类头连接在一起
+     * 与可训练的分类头连接在一起。
+     * 
+     * 注意：基础模型在 loadMobileNetBase() 中被设置为 trainable = false，
+     * 这意味着在训练过程中只有分类头的权重会被更新。
      * @param {number} numClasses - 类别数量
      * @returns {Promise<tf.LayersModel>}
      */
@@ -119,7 +123,7 @@ class ImageClassifierModel {
         // 输入层：接收原始图片 (224, 224, 3)
         const input = tf.input({ shape: [this.mobilenetSize, this.mobilenetSize, 3] });
 
-        // 通过冻结的 MobileNet 基础模型提取特征
+        // 通过 MobileNet 基础模型提取特征（基础模型已在 loadMobileNetBase 中冻结）
         const baseOutput = this.mobilenetBase.apply(input);
 
         // 构建分类头
