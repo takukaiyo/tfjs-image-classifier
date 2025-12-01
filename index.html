@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图像分类器 - TensorFlow.js</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖼️ 图像分类器</h1>
+            <p class="subtitle">基于 TensorFlow.js 的浏览器端机器学习应用</p>
+        </header>
+
+        <main>
+            <!-- 数据管理区 -->
+            <section class="card data-section">
+                <h2>📁 数据管理</h2>
+                
+                <!-- 类别管理 -->
+                <div class="category-management">
+                    <h3>类别管理</h3>
+                    <div class="category-controls">
+                        <input type="text" id="newCategoryInput" placeholder="输入新类别名称">
+                        <button id="addCategoryBtn" class="btn btn-primary">添加类别</button>
+                    </div>
+                    <div id="categoryList" class="category-list"></div>
+                </div>
+
+                <!-- 图片上传区 -->
+                <div class="upload-section">
+                    <h3>上传训练图片</h3>
+                    <div class="upload-controls">
+                        <label for="categorySelect">选择类别：</label>
+                        <select id="categorySelect">
+                            <option value="">-- 请先添加类别 --</option>
+                        </select>
+                    </div>
+                    <div id="dropZone" class="drop-zone">
+                        <div class="drop-zone-content">
+                            <span class="drop-icon">📤</span>
+                            <p>拖拽图片到这里，或点击上传</p>
+                            <input type="file" id="imageInput" multiple accept="image/*" hidden>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 数据统计 -->
+                <div class="data-stats">
+                    <h3>数据统计</h3>
+                    <div id="dataStats" class="stats-container">
+                        <p class="empty-message">暂无数据</p>
+                    </div>
+                    <button id="clearDataBtn" class="btn btn-danger">清空所有数据</button>
+                </div>
+            </section>
+
+            <!-- 训练参数配置 -->
+            <section class="card config-section">
+                <h2>⚙️ 训练参数配置</h2>
+                
+                <div class="config-grid">
+                    <!-- 模型选择 -->
+                    <div class="config-item">
+                        <label>模型类型</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="modelType" value="cnn" checked>
+                                <span>简单 CNN</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="modelType" value="mobilenet">
+                                <span>MobileNet 迁移学习</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 学习率 -->
+                    <div class="config-item">
+                        <label for="learningRate">学习率: <span id="lrValue">0.001</span></label>
+                        <input type="range" id="learningRate" min="0.0001" max="0.01" step="0.0001" value="0.001">
+                    </div>
+
+                    <!-- 批次大小 -->
+                    <div class="config-item">
+                        <label for="batchSize">批次大小</label>
+                        <select id="batchSize">
+                            <option value="16">16</option>
+                            <option value="32" selected>32</option>
+                            <option value="64">64</option>
+                        </select>
+                    </div>
+
+                    <!-- 训练轮次 -->
+                    <div class="config-item">
+                        <label for="epochs">训练轮次 (10-100)</label>
+                        <input type="number" id="epochs" min="10" max="100" value="20">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 训练控制与可视化 -->
+            <section class="card training-section">
+                <h2>🏋️ 训练控制</h2>
+                
+                <div class="training-controls">
+                    <button id="startTrainingBtn" class="btn btn-success">开始训练</button>
+                    <button id="stopTrainingBtn" class="btn btn-danger" disabled>停止训练</button>
+                </div>
+
+                <div class="training-status">
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div id="progressFill" class="progress-fill"></div>
+                        </div>
+                        <span id="progressText">未开始</span>
+                    </div>
+                    <div id="trainingInfo" class="training-info">
+                        <p>轮次: <span id="currentEpoch">0</span> / <span id="totalEpochs">0</span></p>
+                        <p>损失: <span id="currentLoss">--</span></p>
+                        <p>准确率: <span id="currentAccuracy">--</span></p>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-wrapper">
+                        <h3>损失曲线</h3>
+                        <canvas id="lossChart"></canvas>
+                    </div>
+                    <div class="chart-wrapper">
+                        <h3>准确率曲线</h3>
+                        <canvas id="accuracyChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 模型推理 -->
+            <section class="card prediction-section">
+                <h2>🔮 模型推理</h2>
+                
+                <div id="predictionDropZone" class="drop-zone prediction-drop">
+                    <div class="drop-zone-content">
+                        <span class="drop-icon">🔍</span>
+                        <p>拖拽或点击上传测试图片</p>
+                        <input type="file" id="testImageInput" accept="image/*" hidden>
+                    </div>
+                </div>
+
+                <div id="predictionResult" class="prediction-result" style="display: none;">
+                    <div class="prediction-image">
+                        <img id="testPreview" alt="测试图片预览">
+                    </div>
+                    <div class="prediction-chart">
+                        <h3>预测结果</h3>
+                        <canvas id="predictionChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>© 2024 图像分类器 | 使用 TensorFlow.js 构建</p>
+        </footer>
+    </div>
+
+    <!-- JavaScript 模块 -->
+    <script src="js/db.js"></script>
+    <script src="js/model.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
